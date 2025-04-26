@@ -1,165 +1,139 @@
 import { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
-import { 
-  SidebarProvider, 
-  Sidebar, 
-  SidebarTrigger, 
-  SidebarHeader, 
-  SidebarContent, 
-  SidebarMenu, 
-  SidebarMenuItem, 
-  SidebarMenuButton, 
-  SidebarFooter,
-  SidebarSeparator
-} from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link, useNavigate } from "react-router-dom";
+import { BookOpen, User, LogOut, List, BarChart, Home, FilePlus, Book } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { 
-  BookOpen, 
-  Home, 
-  GraduationCap, 
-  CheckSquare, 
-  LineChart, 
-  Settings, 
-  LogOut,
-  UserCircle,
-  BookText,
-  Bell
-} from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "@/components/ui/use-toast";
 
 interface DashboardLayoutProps {
   children: ReactNode;
-  userType: 'student' | 'teacher';
+  userType: "student" | "teacher";
 }
 
-export default function DashboardLayout({ children, userType }: DashboardLayoutProps) {
+const DashboardLayout = ({ children, userType }: DashboardLayoutProps) => {
   const navigate = useNavigate();
-
+  
   const handleLogout = () => {
-    // Здесь будет логика выхода
+    // В реальном приложении здесь был бы API-запрос для выхода
+    toast({
+      title: "Выход из системы",
+      description: "Вы успешно вышли из системы",
+    });
     navigate("/login");
   };
-
+  
   return (
-    <SidebarProvider>
-      <div className="grid min-h-screen w-full grid-cols-[auto_1fr]">
-        <Sidebar>
-          <SidebarHeader>
-            <div className="flex items-center gap-2 px-2">
-              <BookOpen className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">ОбразованиеПлюс</span>
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Главная" onClick={() => navigate(`/${userType}/dashboard`)}>
-                  <Home className="h-5 w-5" />
-                  <span>Главная</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              
-              {userType === 'student' ? (
-                <>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton tooltip="Курсы">
-                      <BookText className="h-5 w-5" />
-                      <span>Мои курсы</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton tooltip="Задания">
-                      <CheckSquare className="h-5 w-5" />
-                      <span>Домашние задания</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton tooltip="Успеваемость">
-                      <LineChart className="h-5 w-5" />
-                      <span>Успеваемость</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </>
-              ) : (
-                <>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton tooltip="Курсы">
-                      <GraduationCap className="h-5 w-5" />
-                      <span>Мои курсы</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton tooltip="Ученики">
-                      <UserCircle className="h-5 w-5" />
-                      <span>Ученики</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton tooltip="Задания">
-                      <CheckSquare className="h-5 w-5" />
-                      <span>Задания</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </>
-              )}
-            </SidebarMenu>
-          </SidebarContent>
-
-          <SidebarSeparator />
-          
-          <SidebarFooter>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Настройки">
-                  <Settings className="h-5 w-5" />
-                  <span>Настройки</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Выйти" onClick={handleLogout}>
-                  <LogOut className="h-5 w-5" />
-                  <span>Выйти</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-            <div className="flex items-center gap-2 px-4 py-2">
-              <Avatar>
-                <AvatarImage alt="User" />
-                <AvatarFallback className="bg-primary text-white">
-                  {userType === 'student' ? 'ИИ' : 'ОМ'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">
-                  {userType === 'student' ? 'Иван Иванов' : 'Ольга Михайловна'}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {userType === 'student' ? 'Ученик' : 'Преподаватель'}
-                </span>
-              </div>
-            </div>
-          </SidebarFooter>
-        </Sidebar>
-
-        <div className="flex flex-col">
-          <header className="h-16 border-b bg-background flex items-center px-6 justify-between">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger />
-              <div className="text-lg font-semibold">
-                {userType === 'student' ? 'Личный кабинет ученика' : 'Кабинет преподавателя'}
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
-            </div>
-          </header>
-          <main className="flex-1 overflow-auto">
-            {children}
-          </main>
+    <div className="flex min-h-screen bg-secondary/10">
+      {/* Боковое меню */}
+      <aside className="w-64 bg-white border-r shadow-sm">
+        <div className="p-4">
+          <Link to="/" className="flex items-center gap-2">
+            <BookOpen className="h-6 w-6 text-primary" />
+            <span className="font-semibold text-lg">ОбразованиеПлюс</span>
+          </Link>
         </div>
-      </div>
-    </SidebarProvider>
+        
+        <Separator />
+        
+        <div className="p-4">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+              <User className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-medium text-sm">
+                {userType === "student" ? "Ученик" : "Преподаватель"}
+              </p>
+              <p className="text-xs text-gray-500">example@email.com</p>
+            </div>
+          </div>
+          
+          <nav className="space-y-1">
+            <Link
+              to={`/${userType}/dashboard`}
+              className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-primary/10 text-gray-700 hover:text-primary transition-colors"
+            >
+              <Home className="h-4 w-4" />
+              <span>Главная</span>
+            </Link>
+            
+            {userType === "student" ? (
+              <>
+                <Link
+                  to={`/${userType}/assignments`}
+                  className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-primary/10 text-gray-700 hover:text-primary transition-colors"
+                >
+                  <List className="h-4 w-4" />
+                  <span>Домашние задания</span>
+                </Link>
+                <Link
+                  to={`/${userType}/courses`}
+                  className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-primary/10 text-gray-700 hover:text-primary transition-colors"
+                >
+                  <Book className="h-4 w-4" />
+                  <span>Мои курсы</span>
+                </Link>
+                <Link
+                  to={`/${userType}/progress`}
+                  className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-primary/10 text-gray-700 hover:text-primary transition-colors"
+                >
+                  <BarChart className="h-4 w-4" />
+                  <span>Прогресс обучения</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to={`/${userType}/assignments`}
+                  className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-primary/10 text-gray-700 hover:text-primary transition-colors"
+                >
+                  <List className="h-4 w-4" />
+                  <span>Задания учеников</span>
+                </Link>
+                <Link
+                  to={`/${userType}/create-assignment`}
+                  className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-primary/10 text-gray-700 hover:text-primary transition-colors"
+                >
+                  <FilePlus className="h-4 w-4" />
+                  <span>Создать задание</span>
+                </Link>
+                <Link
+                  to={`/${userType}/courses`}
+                  className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-primary/10 text-gray-700 hover:text-primary transition-colors"
+                >
+                  <Book className="h-4 w-4" />
+                  <span>Мои курсы</span>
+                </Link>
+                <Link
+                  to={`/${userType}/analytics`}
+                  className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-primary/10 text-gray-700 hover:text-primary transition-colors"
+                >
+                  <BarChart className="h-4 w-4" />
+                  <span>Аналитика успеваемости</span>
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
+        
+        <div className="mt-auto p-4">
+          <Button
+            variant="outline"
+            className="w-full justify-start text-gray-700"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Выйти
+          </Button>
+        </div>
+      </aside>
+      
+      {/* Основное содержимое */}
+      <main className="flex-1">
+        <div className="p-6">{children}</div>
+      </main>
+    </div>
   );
-}
+};
+
+export default DashboardLayout;

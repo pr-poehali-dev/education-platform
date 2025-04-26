@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Book, Award, CheckCircle } from "lucide-react";
+import { GraduationCap, Book, Award, CheckCircle, BookOpen } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Link } from "react-router-dom";
 
