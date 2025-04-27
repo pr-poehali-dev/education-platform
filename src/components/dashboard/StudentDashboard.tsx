@@ -1,205 +1,293 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Clock, BookOpen, Calendar } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BookOpen, CheckCircle, Clock, Award, Calendar } from "lucide-react";
+import { useState } from "react";
 
-export default function StudentDashboard() {
+// Тип для домашнего задания
+interface HomeworkItem {
+  id: string;
+  title: string;
+  course: string;
+  dueDate: string;
+  status: 'pending' | 'completed' | 'overdue';
+}
+
+// Тип для курса
+interface CourseItem {
+  id: string;
+  title: string;
+  teacher: string;
+  progress: number;
+  nextLesson: string;
+}
+
+// Демо-данные
+const upcomingHomework: HomeworkItem[] = [
+  {
+    id: "hw1",
+    title: "Решение задач по алгебре",
+    course: "Математика",
+    dueDate: "29 апреля",
+    status: "pending"
+  },
+  {
+    id: "hw2",
+    title: "Написание эссе по литературе",
+    course: "Литература",
+    dueDate: "30 апреля",
+    status: "pending"
+  },
+  {
+    id: "hw3",
+    title: "Лабораторная работа по физике",
+    course: "Физика",
+    dueDate: "1 мая",
+    status: "pending"
+  }
+];
+
+const completedHomework: HomeworkItem[] = [
+  {
+    id: "hw4",
+    title: "Тест по английскому языку",
+    course: "Английский язык",
+    dueDate: "25 апреля",
+    status: "completed"
+  },
+  {
+    id: "hw5",
+    title: "Практические задания по информатике",
+    course: "Информатика",
+    dueDate: "24 апреля",
+    status: "completed"
+  }
+];
+
+const courses: CourseItem[] = [
+  {
+    id: "course1",
+    title: "Математика",
+    teacher: "Елена Сергеевна",
+    progress: 65,
+    nextLesson: "29 апреля, 15:00"
+  },
+  {
+    id: "course2",
+    title: "Литература",
+    teacher: "Ольга Николаевна",
+    progress: 42,
+    nextLesson: "30 апреля, 10:00"
+  },
+  {
+    id: "course3",
+    title: "Физика",
+    teacher: "Александр Петрович",
+    progress: 78,
+    nextLesson: "1 мая, 13:30"
+  }
+];
+
+// Расписание на неделю
+const schedule = [
+  { day: "Понедельник", lessons: ["Математика (15:00)", "Литература (16:30)"] },
+  { day: "Вторник", lessons: ["Физика (14:00)", "Английский язык (16:00)"] },
+  { day: "Среда", lessons: ["Информатика (15:30)"] },
+  { day: "Четверг", lessons: ["Математика (15:00)", "Физика (16:30)"] },
+  { day: "Пятница", lessons: ["Литература (14:30)", "Английский язык (16:00)"] },
+  { day: "Суббота", lessons: [] },
+  { day: "Воскресенье", lessons: [] }
+];
+
+const StudentDashboard = () => {
+  const [activeTab, setActiveTab] = useState<string>("upcoming");
+
+  // Общий прогресс обучения
+  const overallProgress = 68;
+
   return (
-    <div className="flex-1 space-y-6 p-6">
-      <div className="space-y-1">
-        <h2 className="text-3xl font-bold tracking-tight">Личный кабинет ученика</h2>
-        <p className="text-muted-foreground">
-          Добро пожаловать, Иван! Вот ваш прогресс обучения и задания.
-        </p>
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Привет, Иван! 👋</h1>
+          <p className="text-gray-500">Вот твой прогресс обучения на сегодня</p>
+        </div>
+        <Button>
+          <Calendar className="mr-2 h-4 w-4" />
+          Мое расписание
+        </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {/* Карточки со статистикой */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-medium">Курсы</CardTitle>
-            <CardDescription>Всего записей на курсы</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Прогресс обучения</CardTitle>
+            <Award className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">3</div>
+            <div className="text-2xl font-bold">{overallProgress}%</div>
+            <Progress value={overallProgress} className="mt-2" />
+            <p className="text-xs text-gray-500 mt-2">Общий прогресс по всем курсам</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-medium">Завершено заданий</CardTitle>
-            <CardDescription>Выполненные задания</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Активные курсы</CardTitle>
+            <BookOpen className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">12/18</div>
+            <div className="text-2xl font-bold">{courses.length}</div>
+            <p className="text-xs text-gray-500 mt-2">Количество курсов в процессе обучения</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-medium">Средний балл</CardTitle>
-            <CardDescription>За все задания</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Ожидают выполнения</CardTitle>
+            <Clock className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">4.7</div>
+            <div className="text-2xl font-bold">{upcomingHomework.length}</div>
+            <p className="text-xs text-gray-500 mt-2">Количество предстоящих домашних заданий</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Выполнено</CardTitle>
+            <CheckCircle className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{completedHomework.length}</div>
+            <p className="text-xs text-gray-500 mt-2">Количество выполненных домашних заданий</p>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="homework">
-        <TabsList>
-          <TabsTrigger value="homework">Домашние задания</TabsTrigger>
-          <TabsTrigger value="progress">Прогресс обучения</TabsTrigger>
-          <TabsTrigger value="courses">Мои курсы</TabsTrigger>
-        </TabsList>
-        <TabsContent value="homework" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Активные задания</CardTitle>
-              <CardDescription>
-                Задания, требующие выполнения
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-[300px]">
-                <div className="space-y-4">
-                  {[
-                    { id: 1, title: "Решение уравнений", subject: "Математика", deadline: "27.04.2025", status: "pending" },
-                    { id: 2, title: "Эссе по роману 'Война и мир'", subject: "Литература", deadline: "29.04.2025", status: "pending" },
-                    { id: 3, title: "Практика с условными операторами", subject: "Программирование", deadline: "30.04.2025", status: "in-progress" }
-                  ].map((task) => (
-                    <div key={task.id} className="flex items-start space-x-4 p-3 rounded-lg border">
-                      <div className={`mt-0.5 ${task.status === 'pending' ? 'text-amber-500' : 'text-blue-500'}`}>
-                        {task.status === 'pending' ? <Clock size={18} /> : <BookOpen size={18} />}
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center justify-between">
-                          <p className="font-medium">{task.title}</p>
-                          <span className="text-xs bg-secondary px-2 py-1 rounded-full">{task.subject}</span>
-                        </div>
-                        <div className="flex items-center text-muted-foreground text-sm">
-                          <Calendar size={14} className="mr-1" />
-                          <span>Срок сдачи: {task.deadline}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Выполненные задания</CardTitle>
-              <CardDescription>
-                Последние проверенные задания
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-[200px]">
-                <div className="space-y-4">
-                  {[
-                    { id: 4, title: "Тест по теме 'Электричество'", subject: "Физика", date: "20.04.2025", grade: "5" },
-                    { id: 5, title: "Практическая работа с массивами", subject: "Программирование", date: "18.04.2025", grade: "4" },
-                    { id: 6, title: "Лабораторная работа №3", subject: "Химия", date: "15.04.2025", grade: "5" }
-                  ].map((task) => (
-                    <div key={task.id} className="flex items-start space-x-4 p-3 rounded-lg border">
-                      <div className="mt-0.5 text-green-500">
-                        <CheckCircle size={18} />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center justify-between">
-                          <p className="font-medium">{task.title}</p>
-                          <span className="text-sm font-semibold text-primary">Оценка: {task.grade}</span>
-                        </div>
-                        <div className="flex justify-between text-muted-foreground text-sm">
-                          <span>{task.subject}</span>
-                          <span>{task.date}</span>
-                        </div>
+      {/* Домашние задания */}
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Домашние задания</CardTitle>
+            <CardDescription>
+              Управляйте вашими текущими и выполненными заданиями
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="upcoming" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger 
+                  value="upcoming" 
+                  onClick={() => setActiveTab("upcoming")}
+                >
+                  Предстоящие
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="completed" 
+                  onClick={() => setActiveTab("completed")}
+                >
+                  Выполненные
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="upcoming" className="space-y-4">
+                {upcomingHomework.map((homework) => (
+                  <div 
+                    key={homework.id} 
+                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                  >
+                    <div className="flex-1">
+                      <h4 className="font-medium">{homework.title}</h4>
+                      <div className="text-sm text-gray-500">
+                        {homework.course} • Сдать до: {homework.dueDate}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="progress" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Прогресс по курсам</CardTitle>
-              <CardDescription>
-                Ваша активность по всем курсам
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium">Математика</div>
-                  <div className="text-sm text-muted-foreground">75%</div>
-                </div>
-                <Progress value={75} className="h-2" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium">Программирование</div>
-                  <div className="text-sm text-muted-foreground">60%</div>
-                </div>
-                <Progress value={60} className="h-2" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium">Литература</div>
-                  <div className="text-sm text-muted-foreground">40%</div>
-                </div>
-                <Progress value={40} className="h-2" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Успеваемость</CardTitle>
-              <CardDescription>
-                Динамика оценок за последний месяц
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[200px] flex items-center justify-center">
-                <p className="text-muted-foreground">График успеваемости будет доступен после загрузки данных</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="courses" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Мои курсы</CardTitle>
-              <CardDescription>
-                Курсы, на которые вы записаны
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-2">
-                {[
-                  { id: 1, title: "Алгебра и геометрия", teacher: "Петрова О.М.", progress: 75 },
-                  { id: 2, title: "Основы программирования", teacher: "Сидоров И.П.", progress: 60 },
-                  { id: 3, title: "Русская литература", teacher: "Иванов А.С.", progress: 40 }
-                ].map((course) => (
-                  <Card key={course.id} className="overflow-hidden">
-                    <div className="h-2 bg-primary" style={{ width: `${course.progress}%` }} />
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold">{course.title}</h3>
-                      <p className="text-sm text-muted-foreground">Преподаватель: {course.teacher}</p>
-                      <div className="mt-2 flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">Прогресс: {course.progress}%</span>
-                        <span className="text-xs text-primary font-medium">Активный</span>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    <Button size="sm">Выполнить</Button>
+                  </div>
                 ))}
+              </TabsContent>
+              <TabsContent value="completed" className="space-y-4">
+                {completedHomework.map((homework) => (
+                  <div 
+                    key={homework.id} 
+                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                  >
+                    <div className="flex-1">
+                      <h4 className="font-medium">{homework.title}</h4>
+                      <div className="text-sm text-gray-500">
+                        {homework.course} • Сдано: {homework.dueDate}
+                      </div>
+                    </div>
+                    <Button size="sm" variant="outline">Просмотреть</Button>
+                  </div>
+                ))}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+
+        {/* Мои курсы */}
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Мои курсы</CardTitle>
+            <CardDescription>
+              Отслеживайте ваш прогресс по текущим курсам
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {courses.map((course) => (
+                <div key={course.id} className="p-3 border rounded-lg hover:bg-gray-50">
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="font-medium">{course.title}</h4>
+                    <span className="text-sm text-gray-500">
+                      {course.progress}%
+                    </span>
+                  </div>
+                  <Progress value={course.progress} className="mb-2" />
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">
+                      Преподаватель: {course.teacher}
+                    </span>
+                    <span className="text-gray-500">
+                      Следующий урок: {course.nextLesson}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Расписание */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Расписание на неделю</CardTitle>
+          <CardDescription>
+            Ваше текущее расписание занятий
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {schedule.map((day, index) => (
+              <div key={index} className="p-3 border rounded-lg">
+                <h4 className="font-medium mb-2">{day.day}</h4>
+                {day.lessons.length > 0 ? (
+                  <ul className="space-y-1">
+                    {day.lessons.map((lesson, idx) => (
+                      <li key={idx} className="text-sm text-gray-600">{lesson}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">Нет занятий</p>
+                )}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
-}
+};
+
+export default StudentDashboard;
